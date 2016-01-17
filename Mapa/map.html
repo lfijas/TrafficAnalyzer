@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<script src="http://maps.googleapis.com/maps/api/js"></script>
+<script>
+var id = getParameterByName("id");
+if (id == "") {
+  window.alert("Brak parametru: id przejazdu");
+}
+
+else {
+  var xmlhttp = new XMLHttpRequest();
+  var url = "http://localhost:8080/html/loadRoute.php?id=" + id;
+
+  xmlhttp.onreadystatechange=function() {
+    if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+	initialize(xmlhttp.responseText);
+    }
+  }
+  xmlhttp.open("GET", url, true);
+  xmlhttp.send();
+}
+
+function initialize(response) {
+  var obj = JSON.parse(response);
+  var trafficArray = obj.Traffic;
+  if (trafficArray.length == 0) {
+    window.alert("Brak przejazdu o id równym: " + id);
+  }
+  
+  var mapProp = {
+    center:new google.maps.LatLng(52.408333, 16.934167),
+    zoom:8,
+    mapTypeId:google.maps.MapTypeId.ROADMAP
+  };
+  var map=new google.maps.Map(document.getElementById("googleMap"),mapProp);
+ 
+  var i;
+  for (i = 0; i < trafficArray.length; i ++) {
+    var marker = new google.maps.Marker({
+    position: new google.maps.LatLng(trafficArray[i].Latitude, trafficArray[i].Longitude),
+    map: map,
+    icon: {
+	path: google.maps.SymbolPath.CIRCLE,
+	scale: 1,
+	fillColor: 'red',
+	strokeColor: 'red'
+      },
+    });
+  }
+  
+  var optimalRouteArray = obj.Optimal_routes;
+  if (optimalRouteArray.length == 0) {
+    window.alert("Brak optymalnej trasy wyznaczonej przejazdu o id równym: " + id);
+  }
+  for (i = 0; i < optimalRouteArray.length; i ++) {
+    var marker = new google.maps.Marker({
+    position: new google.maps.LatLng(optimalRouteArray[i].Latitude, optimalRouteArray[i].Longitude),
+    map: map,
+    icon: {
+	path: google.maps.SymbolPath.CIRCLE,
+	scale: 1,
+	fillColor: 'green',
+	strokeColor: 'green'
+      },
+    });
+  }
+ 
+}
+
+function getParameterByName(name) {
+    name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
+    var regex = new RegExp("[\\?&]" + name + "=([^&#]*)"),
+        results = regex.exec(location.search);
+    return results === null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
+}
+
+</script>
+</head>
+
+<body>
+<div id="googleMap" style="width:1200px;height:600px;"></div>
+</body>
+</html>

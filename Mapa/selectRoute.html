@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+</head>
+<body>
+
+<form action="map.html">
+Id przejazdu: <input type="text" id="id" name="id"><br>
+<input type="submit" value="Wczytaj">
+</form>
+
+<br>
+
+<input type=button
+value="Export"
+onClick="exportClicked()">
+
+<script type="text/javascript">
+function exportClicked() {
+  window.location.href="exportRoute.php?id=" + document.getElementById('id').value;
+}
+</script>
+
+
+<p>Zakres id przejazdów: od 1 do 42829</p>
+
+</body>
+</html>

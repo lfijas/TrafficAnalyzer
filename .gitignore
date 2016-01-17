@@ -1,0 +1,9 @@
+#ignore everything
+/*
+/*/
+*~
+#except for
+!.gitignore
+!/Mapa/
+!/R_scripts
+
