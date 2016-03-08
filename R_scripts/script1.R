@@ -36,9 +36,10 @@ journeysLengths = journeysLengths[!is.na(journeysLengths)]
 hist(journeysLengths)
 
 #script 3
-resultSet = dbSendQuery(mydb, "SELECT Id, COUNT(*) FROM Traffic GROUP BY Id")
+#resultSet = dbSendQuery(mydb, "SELECT Id, COUNT(*) FROM Traffic GROUP BY Id")
+resultSet = dbSendQuery(mydb, "SELECT Id, COUNT(*) FROM Traffic_without_parking GROUP BY Id")
 data = fetch(resultSet, n = -1)
-hist(data[, 2], breaks = seq(0, max(data[, 2]), by = 1), xlim = c(0, 1000))
+hist(data[, 2], breaks = seq(0, max(data[, 2]), by = 1), xlim = c(0, 100))
 
 #script 4
 maxTimeDiffs = c()
