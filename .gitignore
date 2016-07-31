@@ -2,6 +2,7 @@
 /*
 /*/
 *~
+/SQL_scripts/Backups
 #except for
 !.gitignore
 !/Mapa/
