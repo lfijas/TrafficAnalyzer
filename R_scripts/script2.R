@@ -46,8 +46,8 @@ latMargin = 0.00005
 longMargin = 0.00007
 PARKING_TIME = 60
 
-trafficWithoutParkingId = 26379
-for (id in 21:50) {
+trafficWithoutParkingId = 39111
+for (id in 3796:25093) {
   print(paste("Id", id))
   resultSet = dbSendQuery(mydb, paste("select Id, Date, Longitude, Latitude, Tag from Traffic_with_speed where Id =", id ," and Tag = 'WAW' order by Date"))
   data = fetch(resultSet, n = -1)
@@ -59,30 +59,28 @@ for (id in 21:50) {
       longDiff = abs(data[i, 3] - data[groupBeginningIndex, 3])
       latDiff = abs(data[i, 4] - data[groupBeginningIndex, 4]) 
       if (latDiff > latMargin  || longDiff > longMargin) {
-        if (i - groupBeginningIndex > 1) {
-          timeDiff = as.numeric(difftime(as.POSIXlt(data[i - 1, 2], tz = ""),
-                                                            as.POSIXlt(data[groupBeginningIndex, 2], tz = ""), units = "secs"))
-          if (timeDiff > PARKING_TIME) {
-            ###option 1###
-            #queries <- paste("insert into Traffic_without_parking 
-            #                 values(", trafficWithoutParkingId, ", ", data[routeStartIndex:groupBeginningIndex, 1], ", '", data[routeStartIndex:groupBeginningIndex, 2], "', ", data[routeStartIndex:groupBeginningIndex, 3], ", ", data[routeStartIndex:groupBeginningIndex, 4], ", 'WAW')")
-            #for (query in queries) {
-            #  dbGetQuery(mydb, query)
-            #}
-            ###option 1 END###
-            ###option 2###
-            query = "insert into Traffic_without_parking values"
-            for (j in routeStartIndex:groupBeginningIndex) {
-              query <- paste(query, "(", trafficWithoutParkingId, ", ", data[j, 1], ", '", data[j, 2], "', ", data[j, 3], ", ", data[j, 4], ", 'WAW'),")              
-            }
-            dbGetQuery(mydb, substr(query, 1, nchar(query) - 1))
-            ###option 2 END###
-            trafficWithoutParkingId = trafficWithoutParkingId + 1
-            
-            routeStartIndex = i
+        timeDiff = as.numeric(difftime(as.POSIXlt(data[i - 1, 2], tz = ""),
+                                                          as.POSIXlt(data[groupBeginningIndex, 2], tz = ""), units = "secs"))
+        if (timeDiff > PARKING_TIME) {
+          ###option 1###
+          #queries <- paste("insert into Traffic_without_parking 
+          #                 values(", trafficWithoutParkingId, ", ", data[routeStartIndex:groupBeginningIndex, 1], ", '", data[routeStartIndex:groupBeginningIndex, 2], "', ", data[routeStartIndex:groupBeginningIndex, 3], ", ", data[routeStartIndex:groupBeginningIndex, 4], ", 'WAW')")
+          #for (query in queries) {
+          #  dbGetQuery(mydb, query)
+          #}
+          ###option 1 END###
+          ###option 2###
+          query = "insert into Traffic_without_parking values"
+          for (j in routeStartIndex:groupBeginningIndex) {
+            query <- paste(query, "(", trafficWithoutParkingId, ", ", data[j, 1], ", '", data[j, 2], "', ", data[j, 3], ", ", data[j, 4], ", 'WAW'),")              
           }
+          dbGetQuery(mydb, substr(query, 1, nchar(query) - 1))
+          ###option 2 END###
+          trafficWithoutParkingId = trafficWithoutParkingId + 1
+          
+          routeStartIndex = i
         }
-        groupBeginningIndex = i
+      groupBeginningIndex = i
       }
     }
     ###option 1###
