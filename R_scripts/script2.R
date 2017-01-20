@@ -46,8 +46,8 @@ latMargin = 0.00005
 longMargin = 0.00007
 PARKING_TIME = 60
 
-trafficWithoutParkingId = 39111
-for (id in 3796:25093) {
+trafficWithoutParkingId = 25966
+for (id in 1:1000) {
   print(paste("Id", id))
   resultSet = dbSendQuery(mydb, paste("select Id, Date, Longitude, Latitude, Tag from Traffic_with_speed where Id =", id ," and Tag = 'WAW' order by Date"))
   data = fetch(resultSet, n = -1)
@@ -59,7 +59,7 @@ for (id in 3796:25093) {
       longDiff = abs(data[i, 3] - data[groupBeginningIndex, 3])
       latDiff = abs(data[i, 4] - data[groupBeginningIndex, 4]) 
       if (latDiff > latMargin  || longDiff > longMargin) {
-        timeDiff = as.numeric(difftime(as.POSIXlt(data[i - 1, 2], tz = ""),
+        timeDiff = as.numeric(difftime(as.POSIXlt(data[i, 2], tz = ""),
                                                           as.POSIXlt(data[groupBeginningIndex, 2], tz = ""), units = "secs"))
         if (timeDiff > PARKING_TIME) {
           ###option 1###
