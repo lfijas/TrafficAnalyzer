@@ -10,7 +10,7 @@ timeDiffs = c()
 for (id in 1:1000) {
   print(paste("Id", id))
   #resultSet = dbSendQuery(mydb, paste("select Id, Date, Longitude, Latitude from Traffic where Id = 12 order by Date"))
-  resultSet = dbSendQuery(mydb, paste("select Id, Date, Longitude, Latitude from Traffic_with_speed where Id =", id ," and Tag = 'WAW' order by Date"))
+  resultSet = dbSendQuery(mydb, paste("select Id, Date, Longitude, Latitude from Traffic_with_speed where Id =", id ," and Tag = '' order by Date"))
   data = fetch(resultSet, n = -1)
   groupBeginningIndex = 1
   count = nrow(data)
@@ -40,16 +40,19 @@ hist(timeDiffs, breaks = seq(0, max(timeDiffs) + 10, by = 10), xlim = c(0, 200),
 #hist(timeDiffs, freq = FALSE, breaks = seq(0, max(timeDiffs), by = 1))
 #hist(timeDiffs, freq = FALSE, breaks = seq(0, max(timeDiffs), by = 1), xlim = c(0, 50))
 
+ggplot_data <- data.frame(timeDiffs)
+breaks <- seq(0, 1000, by = 10)
+ggplot(data = ggplot_data, aes(x = ggplot_data$timeDiffs)) + geom_histogram(breaks = breaks, color = "black" , fill = "cornflowerblue") + scale_y_log10() + theme_classic() + labs(x = "Długość postoju w sekundach", y = "Liczba postojów")
+
 #script 2 - splitting the route if stopping the car is detected
-#TODO - sprawidzić dlaczego przejazd o id 42829 nie został zapisany do tabeli Traffic without parking
 latMargin = 0.00005
 longMargin = 0.00007
 PARKING_TIME = 60
 
-trafficWithoutParkingId = 25966
-for (id in 1:1000) {
+trafficWithoutParkingId = 300614
+for (id in 42679:42829) {
   print(paste("Id", id))
-  resultSet = dbSendQuery(mydb, paste("select Id, Date, Longitude, Latitude, Tag from Traffic_with_speed where Id =", id ," and Tag = 'WAW' order by Date"))
+  resultSet = dbSendQuery(mydb, paste("select Id, Date, Longitude, Latitude, Tag from Traffic_with_speed where Id =", id ," and Tag = '' order by Date"))
   data = fetch(resultSet, n = -1)
   groupBeginningIndex = 1
   count = nrow(data)
@@ -72,7 +75,7 @@ for (id in 1:1000) {
           ###option 2###
           query = "insert into Traffic_without_parking values"
           for (j in routeStartIndex:groupBeginningIndex) {
-            query <- paste(query, "(", trafficWithoutParkingId, ", ", data[j, 1], ", '", data[j, 2], "', ", data[j, 3], ", ", data[j, 4], ", 'WAW'),")              
+            query <- paste(query, "(", trafficWithoutParkingId, ", ", data[j, 1], ", '", data[j, 2], "', ", data[j, 3], ", ", data[j, 4], ", 'POZ'),")              
           }
           dbGetQuery(mydb, substr(query, 1, nchar(query) - 1))
           ###option 2 END###
@@ -93,7 +96,7 @@ for (id in 1:1000) {
     ###option 2###
     query = "insert into Traffic_without_parking values"
     for (j in routeStartIndex:count) {
-      query <- paste(query, "(", trafficWithoutParkingId, ", ", data[j, 1], ", '", data[j, 2], "', ", data[j, 3], ", ", data[j, 4], ", 'WWW'),")              
+      query <- paste(query, "(", trafficWithoutParkingId, ", ", data[j, 1], ", '", data[j, 2], "', ", data[j, 3], ", ", data[j, 4], ", 'POZ'),")              
     }
     dbGetQuery(mydb, substr(query, 1, nchar(query) - 1))
     ###option 2 END###

@@ -16,7 +16,7 @@ if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
 
-$sql = "SELECT Id, Date, Latitude, Longitude FROM Traffic WHERE Id = " . $id;
+$sql = "SELECT Id, Date, Latitude, Longitude FROM Traffic_without_parking WHERE Id = " . $id;
 $result = $conn->query($sql);
 
 $outp = '{"Traffic":[';
